@@ -23,6 +23,9 @@ namespace Microsoft.WindowsAzure.Storage.Core
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Diagnostics;
+    using System.Threading;
+
 
 #if WINDOWS_RT || NETCORE
     using System.Threading;
@@ -77,6 +80,21 @@ namespace Microsoft.WindowsAzure.Storage.Core
         private IBufferManager bufferManager;
 
         /// <summary>
+        /// Stopwatch to pace the HTTP traffic.
+        /// </summary>
+        private readonly Stopwatch _stopwatch;
+
+        /// <summary>
+        /// Amount of time per buffer copy operation
+        /// </summary>
+        private long _ticksPerIteration;
+
+        /// <summary>
+        /// Experimental: may be used to pace number of parallel operations
+        /// </summary>
+        private long buffersPerIteration = 1;
+
+        /// <summary>
         ///  Initializes a new instance of the <see cref="MultiBufferMemoryStream"/> class with the specified buffer manager.
         /// </summary>
         /// <param name="bufferManager">The <see cref="IBufferManager"/> to use to acquire and return buffers for the stream. May be <c>null</c>.</param>
@@ -92,6 +110,9 @@ namespace Microsoft.WindowsAzure.Storage.Core
             {
                 throw new ArgumentOutOfRangeException("bufferSize", "Buffer size must be a positive, non-zero value");
             }
+
+            _stopwatch = new Stopwatch();
+
         }
 
         /// <summary>
@@ -462,8 +483,15 @@ namespace Microsoft.WindowsAzure.Storage.Core
 
             try
             {
+
+                _stopwatch.Start();
+                SetTargetRate(65535 * 11);
+
                 while (leftToRead != 0)
                 {
+
+                    var sendingStart = _stopwatch.ElapsedTicks;
+
                     if (copyState.ExpiryTime.HasValue && DateTime.Now.CompareTo(copyState.ExpiryTime.Value) > 0)
                     {
                         throw new TimeoutException();
@@ -475,6 +503,8 @@ namespace Microsoft.WindowsAzure.Storage.Core
                     this.AdvancePosition(ref leftToRead, blockReadLength);
 
                     IAsyncResult asyncResult = copyState.Destination.BeginWrite(currentBlock.Array, currentBlock.Offset, blockReadLength, this.FastCopyToCallback, result);
+
+                    DoPause(sendingStart);
 
                     if (!asyncResult.CompletedSynchronously)
                     {
@@ -741,6 +771,63 @@ namespace Microsoft.WindowsAzure.Storage.Core
             byte[] currentBlock = this.bufferBlocks[blockID];
 
             return new ArraySegment<byte>(currentBlock, blockPosition, currentBlock.Length - blockPosition);
+        }
+
+        /// <summary>
+        /// Creates a spinner to pace the HTTP traffic.
+        /// </summary>
+        private class BusyWaiter
+        {
+            private SpinWait _spinner = new SpinWait();
+
+            /// <summary>
+            /// Do something brief. (Is to be called within loop by caller)
+            /// </summary>
+            /// <remarks>
+            /// Possibly an empty loop, at the caller, would do since most (all?) JITters leave such loops in place.
+            /// So this really just amounts to something that should discourage any future jitter from considering
+            /// the method empty.
+            /// </remarks>
+            public void WaitOnce()
+            {
+                if (_spinner.NextSpinWillYield)
+                {
+                    _spinner = new SpinWait();  // this one won't yield
+                }
+                _spinner.SpinOnce();
+            }
+        }
+
+        /// <summary>
+        /// Calculates _ticksPerIteration based on given throughput
+        /// </summary>
+        private void SetTargetRate(long targetBytesPerSecond)
+        {
+
+            var bytesPerIteration = buffersPerIteration * bufferSize;
+
+            var iterationsPerSecond = (double)targetBytesPerSecond / bytesPerIteration;
+            var secondsPerIteration = 1 / iterationsPerSecond;
+            _ticksPerIteration = (long)(secondsPerIteration * Stopwatch.Frequency);
+        }
+
+        /// <summary>
+        /// Pauses until _ticksPerIteration is reached
+        /// </summary>
+        private void DoPause(long sendingStart)
+        {
+            var pausingStart = _stopwatch.ElapsedTicks;
+            var sendingTicksThisIteration = _stopwatch.ElapsedTicks - sendingStart;
+            var remainingPause = _ticksPerIteration - sendingTicksThisIteration;
+            remainingPause = Math.Max(remainingPause, 0);
+            Console.WriteLine("remaining pause: {0}", remainingPause);
+
+            // Do the actual pausing
+            var waiter = new BusyWaiter();
+            while ((_stopwatch.ElapsedTicks - pausingStart) < remainingPause)
+            {
+                waiter.WaitOnce();
+            }
         }
 
         private volatile bool disposed = false;
