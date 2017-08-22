@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{CE1EB2B6-0DA8-43D4-A2E1-001804697009}"
 	ProjectSection(SolutionItems) = preProject
@@ -51,6 +51,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.WindowsAzure.Storage.RT", "Lib\WindowsRuntime\Microsoft.WindowsAzure.Storage.RT.csproj", "{42CB7861-70BB-4F34-A815-4355E6EA2589}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.WindowsAzure.Storage.Desktop", "Lib\WindowsDesktop\Microsoft.WindowsAzure.Storage.Desktop.csproj", "{C6787633-B26A-4913-A762-4C0FFCEB6FE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPPacingTest", "HTTPPacingTest\HTTPPacingTest.csproj", "{AD0A471A-E50D-4776-A46D-A5981E041531}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -254,6 +256,26 @@ Global
 		{C6787633-B26A-4913-A762-4C0FFCEB6FE3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C6787633-B26A-4913-A762-4C0FFCEB6FE3}.Release|x64.ActiveCfg = Release|Any CPU
 		{C6787633-B26A-4913-A762-4C0FFCEB6FE3}.Release|x86.ActiveCfg = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|ARM.Build.0 = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|x64.Build.0 = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Debug|x86.Build.0 = Debug|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|ARM.ActiveCfg = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|ARM.Build.0 = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|x64.ActiveCfg = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|x64.Build.0 = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|x86.ActiveCfg = Release|Any CPU
+		{AD0A471A-E50D-4776-A46D-A5981E041531}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -278,5 +300,9 @@ Global
 		{008D78B8-5C78-4BD7-9779-D2A6B2D35091} = {28E2E0D3-7EA3-4A92-BF2C-02D021D09F51}
 		{42CB7861-70BB-4F34-A815-4355E6EA2589} = {98BAD4CC-AB18-43FF-9778-C226262B2188}
 		{C6787633-B26A-4913-A762-4C0FFCEB6FE3} = {5F685EAE-1061-4433-A294-CB971EAE70A1}
+		{AD0A471A-E50D-4776-A46D-A5981E041531} = {5F685EAE-1061-4433-A294-CB971EAE70A1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ECF9EC69-37BF-4974-93A6-4428359403F7}
 	EndGlobalSection
 EndGlobal
